@@ -12,6 +12,7 @@
       color: #4a004d;
       overflow-x: hidden;
     }
+
     header {
       background: #ff66b2;
       padding: 10px;
@@ -21,7 +22,9 @@
       font-weight: bold;
       border-bottom: 5px solid #ff99cc;
     }
+
     .main-btn {
+      position: relative;
       display: block;
       width: fit-content;
       margin: 20px auto 10px;
@@ -35,18 +38,57 @@
       font-weight: bold;
       box-shadow: 0 5px 15px rgba(255, 105, 180, 0.5);
       transition: all 0.3s ease;
+      overflow: hidden;
+      animation: pulse 2.5s infinite;
     }
+
     .main-btn:hover {
       background: #e91e63;
     }
 
-    /* نص متحرك بدل marquee */
+    .main-btn::after {
+      content: "";
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background: rgba(255, 255, 255, 0.5);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      border-radius: 50%;
+      animation: ripple 0.6s linear forwards;
+      pointer-events: none;
+    }
+
+    .main-btn:active::after {
+      animation: ripple 0.6s linear forwards;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 15px rgba(255, 105, 180, 0.4);
+      }
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 25px rgba(255, 105, 180, 0.8);
+      }
+    }
+
+    @keyframes ripple {
+      to {
+        transform: translate(-50%, -50%) scale(3);
+        opacity: 0;
+      }
+    }
+
     .marquee-wrapper {
       background-color: #fff;
       overflow: hidden;
       position: relative;
       height: 40px;
     }
+
     .marquee-text {
       position: absolute;
       white-space: nowrap;
@@ -55,13 +97,10 @@
       font-weight: bold;
       animation: scrollText 12s linear infinite;
     }
+
     @keyframes scrollText {
-      0% {
-        right: -100%;
-      }
-      100% {
-        right: 100%;
-      }
+      0% { right: -100%; }
+      100% { right: 100%; }
     }
 
     .countdown {
@@ -81,26 +120,41 @@
       margin: 20px auto;
       max-width: 1000px;
     }
+
     .media-row img {
       width: 180px;
       height: auto;
       border-radius: 15px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      opacity: 0;
+      transform: scale(0.8);
+      transition: transform 0.4s ease, box-shadow 0.4s ease, opacity 0.6s ease;
     }
 
-    /* القسم المتحرك الجديد */
+    .media-row img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(255, 105, 180, 0.6);
+    }
+
+    .media-row img.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
     .animated-text-section {
       background: #fff0f8;
       padding: 40px 10px;
       text-align: center;
       animation: fadeIn 2s ease-in-out;
     }
+
     .animated-text-section h2 {
       font-size: 28px;
       color: #e91e63;
       margin-bottom: 20px;
       animation: slideUp 2s ease-in-out;
     }
+
     .animated-icons {
       display: flex;
       justify-content: center;
@@ -108,6 +162,7 @@
       margin: 20px auto;
       flex-wrap: wrap;
     }
+
     .icon-box {
       font-size: 40px;
       animation: bounce 2s infinite;
@@ -117,12 +172,14 @@
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-10px); }
     }
+
     @keyframes slideUp {
       0% { opacity: 0; transform: translateY(20px); }
       100% { opacity: 1; transform: translateY(0); }
     }
+
     @keyframes fadeIn {
-      from {opacity: 0;} to {opacity: 1;}
+      from { opacity: 0; } to { opacity: 1; }
     }
 
     footer {
@@ -149,15 +206,14 @@
   ⏳ العرض ينتهي خلال: <span id="time">جارٍ التحميل...</span>
 </div>
 
-<div class="media-row">
-  <img src="01.png" alt="صورة 1" />
-  <img src="02.png" alt="صورة 2" />
+<div class="media-row" id="mediaRow">
+  <img src="06.jpg" alt="صورة 1" />
+  <img src="07.jpg" alt="صورة 2" />
   <img src="new.gif" alt="عروض متحركة" />
-  <img src="03.png" alt="صورة 3" />
-  <img src="04.png" alt="صورة 4" />
+  <img src="10.jpg" alt="صورة 3" />
+  <img src="09.jpg" alt="صورة 4" />
 </div>
 
-<!-- قسم متحرك مبهر بدلاً من الكروت -->
 <div class="animated-text-section">
   <h2>💃 استعدي لأجمل تجربة تسوق بناتية! 💖</h2>
   <div class="animated-icons">
@@ -174,6 +230,7 @@
 </footer>
 
 <script>
+  // عداد تنازلي
   const endDate = new Date();
   endDate.setDate(endDate.getDate() + 3);
   const countdown = document.getElementById("time");
@@ -194,6 +251,18 @@
 
   setInterval(updateCountdown, 1000);
   updateCountdown();
+
+  // إظهار الصور تدريجياً عند التمرير
+  const images = document.querySelectorAll(".media-row img");
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("visible");
+      }
+    });
+  }, { threshold: 0.3 });
+
+  images.forEach(img => observer.observe(img));
 </script>
 
 </body>
